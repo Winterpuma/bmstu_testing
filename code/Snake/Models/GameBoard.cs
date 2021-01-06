@@ -12,6 +12,8 @@ namespace Snake.Models
         public Size GameBoardSize { get; private set; }
 
         private SnakeDirection _snakeHeadDirection;
+        public EnumDirection SnakeDirection { get => _snakeHeadDirection.Direction; }
+
         public List<Coordinate> Snake { get; private set; }
         public List<Coordinate> Food { get; private set; }
 

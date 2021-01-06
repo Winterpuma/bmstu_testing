@@ -9,6 +9,7 @@ namespace Snake.Models
 
         Size GameBoardSize { get; }
         
+        EnumDirection SnakeDirection { get; }
         List<Coordinate> Snake { get; }
         List<Coordinate> Food { get; }
 
