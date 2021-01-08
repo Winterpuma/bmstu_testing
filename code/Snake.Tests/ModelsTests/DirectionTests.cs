@@ -14,8 +14,7 @@ namespace Snake.Tests.ModelsTests
             SnakeDirection direction = new SnakeDirection() { Direction = (EnumDirection)111 };
             Assert.False(direction.IsDirectionOk());
         }
-
-
+        
         /// <summary>
         /// Проверяет метод IsDirectionOk на корретных данных
         /// </summary>
@@ -28,8 +27,7 @@ namespace Snake.Tests.ModelsTests
             SnakeDirection direction = new SnakeDirection() { Direction = dir };
             Assert.True(direction.IsDirectionOk());
         }
-
-
+        
         /// <summary>
         /// Проверяет метод IsDirectionsContrary на обратных направлениях
         /// </summary>
@@ -42,8 +40,7 @@ namespace Snake.Tests.ModelsTests
             Assert.True(direction.IsDirectionsContrary(contraryDirection));
             Assert.True(contraryDirection.IsDirectionsContrary(direction));
         }
-
-
+        
         /// <summary>
         /// Проверяет метод IsDirectionsContrary на одинаковых направлениях
         /// </summary>
@@ -53,8 +50,7 @@ namespace Snake.Tests.ModelsTests
             SnakeDirection direction = new SnakeDirection() { Direction = EnumDirection.Left };
             Assert.False(direction.IsDirectionsContrary(direction));
         }
-
-
+        
         /// <summary>
         /// Проверяет метод IsDirectionsContrary на разных, не обратных направлениях
         /// </summary>
