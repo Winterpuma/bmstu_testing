@@ -46,6 +46,16 @@ namespace Snake.Models
         }
 
         /// <summary>
+        /// Заканчивает жизненный цикл таймера
+        /// </summary>
+        public void FinishTimer()
+        {
+            // Чтобы был действительно новый таймер при
+            // малых интервалах создания (когда GC не поспевает)
+            _onUpdateTimer.Dispose();
+        }
+
+        /// <summary>
         /// Возвращает время до наступления следующего хода
         /// </summary>
         public int CountTimeUntilNextTurnMiliseconds()
