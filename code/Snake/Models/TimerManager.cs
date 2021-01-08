@@ -8,7 +8,7 @@ namespace Snake.Models
     /// Отвечает за запуск функции по таймеру и 
     /// взаимодействие со временем связанным с таймером
     /// </summary>
-    public class TimerManager
+    public class TimerManager : ITimerManager
     {
         private TimeSpan _turnTime;
         private Timer _onUpdateTimer;        
@@ -25,7 +25,17 @@ namespace Snake.Models
             _onUpdateTimer = new Timer(function);
             _stopwatch = new Stopwatch();
         }
-        
+
+        /// <summary>
+        /// Устанавливает периодично запускаемую функцию
+        /// </summary>
+        public void SetTimerCallbackDontStart(TimerCallback function)
+        {
+            if (_onUpdateTimer != null)
+                _onUpdateTimer.Dispose();
+            _onUpdateTimer = new Timer(function);
+        }
+
         /// <summary>
         /// Запуск таймера
         /// </summary>
@@ -39,7 +49,7 @@ namespace Snake.Models
         /// <summary>
         /// Перезапуск часов
         /// </summary>
-        public void ResetStopwatch()
+        public void Reset()
         {
             _stopwatch.Reset();
             _stopwatch.Start();

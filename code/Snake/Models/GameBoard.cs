@@ -7,7 +7,7 @@ namespace Snake.Models
     {
         public int TurnNumber { get; private set; } = 0;
         public int TimeUntilNextTurnMiliseconds { get; private set; }
-        private TimerManager _timerManager;
+        private ITimerManager _timerManager;
 
         public Size GameBoardSize { get; private set; }
 
@@ -22,8 +22,8 @@ namespace Snake.Models
         /// <summary>
         /// Создает игру с автоматической сменой хода по таймеру
         /// </summary>
-        /// <param name="gameBoardSize"></param>
-        /// <param name="turnTimeInMilliseconds"></param>
+        /// <param name="gameBoardSize">Размер игрового поля</param>
+        /// <param name="turnTimeInMilliseconds">Время одного хода</param>
         public GameBoard(Size gameBoardSize, int turnTimeInMilliseconds)
         {
             Snake = new List<Coordinate>();
@@ -34,7 +34,24 @@ namespace Snake.Models
 
             StartGame();
         }
-        
+
+        /// <summary>
+        /// Создает игру 
+        /// </summary>
+        /// <param name="gameBoardSize">Размер игрового поля</param>
+        /// <param name="timerManager">Настроенный менеджер смены хода</param>
+        public GameBoard(Size gameBoardSize, ITimerManager timerManager)
+        {
+            Snake = new List<Coordinate>();
+            Food = new List<Coordinate>();
+
+            this.GameBoardSize = gameBoardSize;
+            _timerManager = timerManager;
+            _timerManager.SetTimerCallbackDontStart(UpdateGameBoard);
+
+            StartGame();
+        }
+
         /// <summary>
         /// Инициализирует игру при старте
         /// </summary>
@@ -88,7 +105,7 @@ namespace Snake.Models
                 Snake.RemoveAt(Snake.Count - 1);
             }
 
-            _timerManager.ResetStopwatch();
+            _timerManager.Reset();
         }
         
         /// <summary>
