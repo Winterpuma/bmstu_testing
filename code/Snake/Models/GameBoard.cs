@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Snake.Models
 {
-    class GameBoard : IGameBoard
+    public class GameBoard : IGameBoard
     {
         public int TurnNumber { get; private set; } = 0;
         public int TimeUntilNextTurnMiliseconds { get; private set; }
