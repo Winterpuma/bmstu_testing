@@ -1,13 +1,13 @@
 ﻿using System;
 using NUnit.Framework;
 using Snake.Models;
+using Snake.Tests.DataBuilder;
 
 namespace Snake.Tests.ModelsTests
 {
     class GameManagerTests
     {
         IGameManager gameManager;
-        private readonly Size size = new Size(20, 20);
         private const int turnTime = 3000; 
 
         [SetUp]
@@ -29,6 +29,8 @@ namespace Snake.Tests.ModelsTests
         [Timeout(5000)] // 5 секунд
         public void CreateNewGameBoardNotEmptyTest()
         {
+            Size size = new SizeBuilder().Box10x10().Build();
+
             Guid resGuid = gameManager.CreateNewGameBoard(size, turnTime);
             
             Assert.AreNotEqual(resGuid, Guid.Empty);
@@ -41,6 +43,8 @@ namespace Snake.Tests.ModelsTests
         [Timeout(10000)] // 5 секунд
         public void TestTwoCreatedBoardsDifferentGuidTest()
         {
+            Size size = new SizeBuilder().Box10x10().Build();
+
             Guid gameGuid1 = gameManager.CreateNewGameBoard(size, turnTime);
             Guid gameGuid2 = gameManager.CreateNewGameBoard(size, turnTime);
             
@@ -54,6 +58,7 @@ namespace Snake.Tests.ModelsTests
         [Timeout(5000)] // 5 секунд
         public void GetCreatedGameboardNotNullTest()
         {
+            Size size = new SizeBuilder().Box10x10().Build();
             Guid gameGuid = gameManager.CreateNewGameBoard(size, turnTime);
 
             IGameBoard gameBoard = gameManager.GetGameBoard(gameGuid);
@@ -68,6 +73,7 @@ namespace Snake.Tests.ModelsTests
         [Timeout(10000)]
         public void TwoGameboardsAreDifferentTest()
         {
+            Size size = new SizeBuilder().Box10x10().Build();
             Guid gameGuid1 = gameManager.CreateNewGameBoard(size, turnTime);
             Guid gameGuid2 = gameManager.CreateNewGameBoard(size, turnTime);
 
@@ -86,6 +92,7 @@ namespace Snake.Tests.ModelsTests
         [Timeout(10000)]
         public void AfterSecondGameCreationFirstIsSameTest()
         {
+            Size size = new SizeBuilder().Box10x10().Build();
             Guid gameGuid1 = gameManager.CreateNewGameBoard(size, turnTime);
             IGameBoard gameBoard11 = gameManager.GetGameBoard(gameGuid1);
 
