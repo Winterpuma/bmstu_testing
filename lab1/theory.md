@@ -74,4 +74,104 @@ public void PurchaseFailsWhenNotEnoughInventoryTest()
 ```
 
 ## Data Builder и Object Mother
-[Test Data Builder Pattern](https://ericvruder.dk/20191209/test-data-builder-pattern/)
+[Test Data Builder Pattern](https://ericvruder.dk/20191209/test-data-builder-pattern/)  
+[Improve Tests with the Builder Pattern for Test Data](https://ardalis.com/improve-tests-with-the-builder-pattern-for-test-data/)
+
+### Проблема
+Для тестирования могут понадобиться большие сущности. Причем эти сущности в тестах могут отличаться одним полем или не отличаться вовсе. Это порождает проблему инициализации сущностей тестовыми данными.
+
+### Решение1: Static Helpers
+Можно создать класс, который попросту будет инициализировать и возвращать нужную сущность.
+
+``` cs
+public static class TestDataHelpers
+{
+  public static GetTestAddress()
+  {
+    return new AddressDTO
+    {
+      Description = "Test Address",
+      AttentionTo = "Steve Smith",
+      Line1 = "123 Main Street",
+      Line2 = "",
+      City = "Gotham City",
+      State = "OH",
+      Country = "US",
+      ZipCode = "43210"
+    };
+  }
+}
+```
+
+### Решение2: Data Builder Pattern
+``` cs
+public class AddressDTOBuilder
+{
+    private AddressDTO _entity = new Address;
+    public AddressBuilder Id(int id)
+    {
+        _entity.Id = id;
+        return this;
+    }
+
+    public AddressBuilder Line1(string line1)
+    {
+        _entity.Line1 = line1;
+        return this;
+    }
+
+    public AddressBuilder Line2(string line2)
+    {
+        _entity.Line2 = line2;
+        return this;
+    }
+
+    public AddressBuilder AttentionTo(string attn)
+    {
+        _entity.AttentionTo = attn;
+        return this;
+    }
+
+    // more methods omitted
+
+    public AddressDTO Build()
+    {
+        return _entity;
+    }
+
+    // This approach allows easy modification of test values
+    // Another approach would just have a static method returning AddressDTO
+    public AddressBuilder WithTestValues()
+    {
+        _entity = new AddressDTO
+        {
+            Line1 = "12345 Test Street",
+            Line2 = "3rd Floor",
+            AttentionTo = "Test Person",
+            City = "Test City",
+            State = "OH",
+            ZipCode = "43210",
+            Country = "US",
+            Description = "Test Description",
+            Id = Constants.TEST_ADDRESS_ID
+        }
+        return this;
+    }
+}
+```
+
+Пример работы с этим билдером:
+``` cs
+_testAddress = new AddressDTOBuilder()
+    .WithTestValues()
+    .Id(TEST\_ADDRESS\_ID1)
+    .Build();
+_testAddress2 = new AddressDTOBuilder()
+    .WithTestValues()
+    .Id(TEST\_ADDRESS\_ID2)
+    .Line1("A Different Test Street")
+    .City("Columbus")
+    .ZipCode("43200")
+    .Description("Another test Address")
+    .Build();
+```
