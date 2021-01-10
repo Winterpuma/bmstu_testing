@@ -20,7 +20,21 @@ namespace Snake.Models
                 id = Guid.NewGuid();
             return id;
         }
-        
+
+        /// <summary>
+        /// Создает новую игру с заданными параметрами
+        /// </summary>
+        /// <param name="boardSize">Размер поля</param>
+        /// <param name="timerManager">Менеджер смены хода</param>
+        public Guid CreateNewGameBoard(Size boardSize, ITimerManager timerManager)
+        {
+            GameBoard gameboard = new GameBoard(boardSize, timerManager);
+            Guid id = Guid.NewGuid();
+            while (!_gameBoards.TryAdd(id, gameboard))
+                id = Guid.NewGuid();
+            return id;
+        }
+
         /// <summary>
         /// Возвращает игру по id
         /// </summary>
