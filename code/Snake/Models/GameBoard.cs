@@ -20,22 +20,6 @@ namespace Snake.Models
         private Random _r = new Random();
         
         /// <summary>
-        /// Создает игру с автоматической сменой хода по таймеру
-        /// </summary>
-        /// <param name="gameBoardSize">Размер игрового поля</param>
-        /// <param name="turnTimeInMilliseconds">Время одного хода</param>
-        public GameBoard(Size gameBoardSize, int turnTimeInMilliseconds)
-        {
-            Snake = new List<Coordinate>();
-            Food = new List<Coordinate>();
-
-            this.GameBoardSize = gameBoardSize;
-            _timerManager = new TimerManager(turnTimeInMilliseconds, UpdateGameBoard);
-
-            StartGame();
-        }
-
-        /// <summary>
         /// Создает игру 
         /// </summary>
         /// <param name="gameBoardSize">Размер игрового поля</param>

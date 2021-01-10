@@ -25,7 +25,8 @@ namespace Snake.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Guid))]
         public ActionResult GetGameboard()
         {
-            Guid i = _gameManager.CreateNewGameBoard(new Size(20, 20), 3000);
+            ITimerManager timerManager = new TimerManager(3000);
+            Guid i = _gameManager.CreateNewGameBoard(new Size(20, 20), timerManager);
             return Ok(i);
         }
 

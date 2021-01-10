@@ -18,17 +18,16 @@ namespace Snake.Models
         /// Менеджер для периодично запускаемой function
         /// </summary>
         /// <param name="turnTimeInMilliseconds">Периодичность запуска</param>
-        /// <param name="function">Периодично запускаема функция</param>
-        public TimerManager(int turnTimeInMilliseconds, TimerCallback function)
+        public TimerManager(int turnTimeInMilliseconds)
         {
             _turnTime = new TimeSpan(0, 0, 0, 0, turnTimeInMilliseconds);
-            _onUpdateTimer = new Timer(function);
             _stopwatch = new Stopwatch();
         }
 
         /// <summary>
         /// Устанавливает периодично запускаемую функцию
         /// </summary>
+        /// <param name="function">Периодично запускаемая функция</param>
         public void SetTimerCallbackDontStart(TimerCallback function)
         {
             if (_onUpdateTimer != null)

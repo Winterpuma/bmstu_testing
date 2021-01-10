@@ -15,7 +15,8 @@ namespace Snake.Tests.ModelsTests
         public void Init()
         {
             _counter = 0;
-            timerManager = new TimerManager(turnTime, IncCounter);
+            timerManager = new TimerManager(turnTime);
+            timerManager.SetTimerCallbackDontStart(IncCounter);
         }
         
         [TearDown]

@@ -34,7 +34,7 @@ namespace Snake.Tests.ControllersTests
         [Test]
         public void CreateGameTest()
         {
-            mockGameManager.Setup(x => x.CreateNewGameBoard(It.IsAny<Size>(), It.IsAny<int>()))
+            mockGameManager.Setup(x => x.CreateNewGameBoard(It.IsAny<Size>(), It.IsAny<ITimerManager>()))
                 .Returns(curGameGuid);
             controller = new GameController(mockGameManager.Object);
 

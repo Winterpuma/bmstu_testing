@@ -1,4 +1,5 @@
 ﻿using System;
+using Moq;
 using NUnit.Framework;
 using Snake.Models;
 using Snake.Tests.DataBuilder;
@@ -8,7 +9,6 @@ namespace Snake.Tests.ModelsTests
     class GameManagerTests
     {
         IGameManager gameManager;
-        private const int turnTime = 3000; 
 
         [SetUp]
         public void Init()
@@ -29,9 +29,10 @@ namespace Snake.Tests.ModelsTests
         [Timeout(5000)] // 5 секунд
         public void CreateNewGameBoardNotEmptyTest()
         {
+            Mock<ITimerManager> timerManager = new Mock<ITimerManager>();
             Size size = new SizeBuilder().Box10x10().Build();
 
-            Guid resGuid = gameManager.CreateNewGameBoard(size, turnTime);
+            Guid resGuid = gameManager.CreateNewGameBoard(size, timerManager.Object);
             
             Assert.AreNotEqual(resGuid, Guid.Empty);
         }
@@ -43,10 +44,12 @@ namespace Snake.Tests.ModelsTests
         [Timeout(10000)] // 5 секунд
         public void TestTwoCreatedBoardsDifferentGuidTest()
         {
+            Mock<ITimerManager> timerManager1 = new Mock<ITimerManager>();
+            Mock<ITimerManager> timerManager2 = new Mock<ITimerManager>();
             Size size = new SizeBuilder().Box10x10().Build();
 
-            Guid gameGuid1 = gameManager.CreateNewGameBoard(size, turnTime);
-            Guid gameGuid2 = gameManager.CreateNewGameBoard(size, turnTime);
+            Guid gameGuid1 = gameManager.CreateNewGameBoard(size, timerManager1.Object);
+            Guid gameGuid2 = gameManager.CreateNewGameBoard(size, timerManager2.Object);
             
             Assert.AreNotEqual(gameGuid1, gameGuid2);
         }
@@ -58,8 +61,9 @@ namespace Snake.Tests.ModelsTests
         [Timeout(5000)] // 5 секунд
         public void GetCreatedGameboardNotNullTest()
         {
+            Mock<ITimerManager> timerManager = new Mock<ITimerManager>();
             Size size = new SizeBuilder().Box10x10().Build();
-            Guid gameGuid = gameManager.CreateNewGameBoard(size, turnTime);
+            Guid gameGuid = gameManager.CreateNewGameBoard(size, timerManager.Object);
 
             IGameBoard gameBoard = gameManager.GetGameBoard(gameGuid);
 
@@ -73,9 +77,11 @@ namespace Snake.Tests.ModelsTests
         [Timeout(10000)]
         public void TwoGameboardsAreDifferentTest()
         {
+            Mock<ITimerManager> timerManager1 = new Mock<ITimerManager>();
+            Mock<ITimerManager> timerManager2 = new Mock<ITimerManager>();
             Size size = new SizeBuilder().Box10x10().Build();
-            Guid gameGuid1 = gameManager.CreateNewGameBoard(size, turnTime);
-            Guid gameGuid2 = gameManager.CreateNewGameBoard(size, turnTime);
+            Guid gameGuid1 = gameManager.CreateNewGameBoard(size, timerManager1.Object);
+            Guid gameGuid2 = gameManager.CreateNewGameBoard(size, timerManager2.Object);
 
             IGameBoard gameBoard1 = gameManager.GetGameBoard(gameGuid1);
             IGameBoard gameBoard2 = gameManager.GetGameBoard(gameGuid2);
@@ -92,11 +98,13 @@ namespace Snake.Tests.ModelsTests
         [Timeout(10000)]
         public void AfterSecondGameCreationFirstIsSameTest()
         {
+            Mock<ITimerManager> timerManager1 = new Mock<ITimerManager>();
+            Mock<ITimerManager> timerManager2 = new Mock<ITimerManager>();
             Size size = new SizeBuilder().Box10x10().Build();
-            Guid gameGuid1 = gameManager.CreateNewGameBoard(size, turnTime);
+            Guid gameGuid1 = gameManager.CreateNewGameBoard(size, timerManager1.Object);
             IGameBoard gameBoard11 = gameManager.GetGameBoard(gameGuid1);
 
-            Guid gameGuid2 = gameManager.CreateNewGameBoard(size, turnTime);
+            Guid gameGuid2 = gameManager.CreateNewGameBoard(size, timerManager2.Object);
 
             IGameBoard gameBoard12 = gameManager.GetGameBoard(gameGuid1);
             Assert.AreEqual(gameBoard11, gameBoard12);
