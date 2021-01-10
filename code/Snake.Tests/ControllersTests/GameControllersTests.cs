@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Moq;
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Snake.Models;
@@ -8,94 +9,71 @@ namespace Snake.Tests.ControllersTests
 {
     public class GameControllerTests
     {
-        IGameManager gameManager;
+        Mock<IGameManager> mockGameManager;
         GameController controller;
         Guid curGameGuid;
 
         [SetUp]
         public void Init()
         {
-            gameManager = new GameManager();
-            controller = new GameController(gameManager);
-            curGameGuid = (Guid)((OkObjectResult)controller.GetGameboard()).Value;
+            curGameGuid = Guid.NewGuid();
+            mockGameManager = new Mock<IGameManager>();
         }
 
         [TearDown]
         public void Dispose()
         {
-            gameManager = null;
+            mockGameManager = null;
             controller = null;
             curGameGuid = Guid.Empty;
         }
 
         /// <summary>
-        /// Проверяет корректный запрос на изменение направления
+        /// Проверяет создание игры
         /// </summary>
         [Test]
-        public void ChangeSnakeDirectionTest()
+        public void CreateGameTest()
         {
-            EnumDirection newDirection;
+            mockGameManager.Setup(x => x.CreateNewGameBoard(It.IsAny<Size>(), It.IsAny<int>()))
+                .Returns(curGameGuid);
+            controller = new GameController(mockGameManager.Object);
 
-            if (gameManager.GetGameBoard(curGameGuid).SnakeDirection != EnumDirection.Left)
-                newDirection = EnumDirection.Left;
-            else
-                newDirection = EnumDirection.Right;
+            ActionResult actionResult = controller.GetGameboard();
 
-            ActionResult actionResult = controller.PatchDirection(curGameGuid, new SnakeDirection { Direction = newDirection });
-
-            Assert.IsInstanceOf<OkResult>(actionResult);
-            Assert.AreEqual(newDirection, gameManager.GetGameBoard(curGameGuid).SnakeDirection);
+            Assert.IsInstanceOf<OkObjectResult>(actionResult);
+            Assert.AreEqual(curGameGuid, (Guid)((OkObjectResult)actionResult).Value);
         }
-        
+
         /// <summary>
-        /// Проверяет случай новое_направление == текущее
+        /// Проверяет получение существующей игры
         /// </summary>
         [Test]
-        public void ChangeSnakeDirectionToCurrentTest()
+        public void GetExistingGameboard()
         {
-            EnumDirection newDirection = gameManager.GetGameBoard(curGameGuid).SnakeDirection;
-
-            ActionResult actionResult = controller.PatchDirection(curGameGuid, new SnakeDirection { Direction = newDirection });
-
-            Assert.IsInstanceOf<OkResult>(actionResult);
-            Assert.AreEqual(newDirection, gameManager.GetGameBoard(curGameGuid).SnakeDirection);
-        }
-        
-        /// <summary>
-        /// Проверяет случай некорректного направления в запросе
-        /// </summary>
-        [Test]
-        public void ChangeSnakeToBadDirectionTest()
-        {
-            ActionResult actionResult = controller.PatchDirection(curGameGuid, new SnakeDirection { Direction = (EnumDirection)111 });
-
-            Assert.IsInstanceOf<BadRequestResult>(actionResult);
-        }
-        
-        /// <summary>
-        /// Проверяет случай поворота на 180 градусов
-        /// </summary>
-        [Test]
-        public void ChangeSnakeDirection180Test()
-        {
-            ActionResult actionResult = controller.PatchDirection(curGameGuid, new SnakeDirection { Direction = EnumDirection.Bottom });
-
-            Assert.IsInstanceOf<BadRequestResult>(actionResult);
-        }
-        
-        /// <summary>
-        /// Проверяет соответствие реального состояния игры и возвращаемого в GetGameboard
-        /// </summary>
-        [Test]
-        public void CompareGetGameboardAndActualTest()
-        {
-            IGameBoard expectedGameBoard = gameManager.GetGameBoard(curGameGuid);
+            Mock<IGameBoard> mockResGB = new Mock<IGameBoard>();
+            mockGameManager.Setup(x => x.GetGameBoard(curGameGuid))
+                .Returns(mockResGB.Object);
+            controller = new GameController(mockGameManager.Object);
 
             ActionResult actionResult = controller.GetGameboard(curGameGuid);
-            var contentResult = actionResult as OkObjectResult;
-            var resultGameBord = (IGameBoard)contentResult.Value;
 
-            Assert.AreEqual(expectedGameBoard, resultGameBord);
+            Assert.IsInstanceOf<OkObjectResult>(actionResult);
+            Assert.AreEqual(mockResGB.Object, (IGameBoard)((OkObjectResult)actionResult).Value);
+        }
+
+        /// <summary>
+        /// Проверяет получение не существующей игры
+        /// </summary>
+        [Test]
+        public void GetNotExistingGameboard()
+        {
+            mockGameManager.Setup(x => x.GetGameBoard(curGameGuid))
+                .Returns<IGameBoard>(null);
+            controller = new GameController(mockGameManager.Object);
+
+            ActionResult actionResult = controller.GetGameboard(curGameGuid);
+
+            Assert.IsInstanceOf<NotFoundResult>(actionResult);
         }
     }
 }
