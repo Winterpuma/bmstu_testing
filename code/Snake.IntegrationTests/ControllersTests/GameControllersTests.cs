@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Snake.Models;
 using Snake.Controllers;
 
-namespace Snake.Tests.ControllersTests
+namespace Snake.IntegrationTests.ControllersTests
 {
     public class GameControllerTests
     {
@@ -87,10 +87,20 @@ namespace Snake.Tests.ControllersTests
             IGameBoard expectedGameBoard = gameManager.GetGameBoard(curGameGuid);
 
             ActionResult actionResult = controller.GetGameboard(curGameGuid);
-            var contentResult = actionResult as OkObjectResult;
-            var resultGameBord = (IGameBoard)contentResult.Value;
 
-            Assert.AreEqual(expectedGameBoard, resultGameBord);
+            Assert.IsInstanceOf<OkObjectResult>(actionResult);
+            Assert.AreEqual(expectedGameBoard, (IGameBoard)((OkObjectResult)actionResult).Value);
+        }
+
+        /// <summary>
+        /// Проверяет случай несуществующего GUID
+        /// </summary>
+        [Test]
+        public void CheckGameBoardDoesntExistTest()
+        {
+            ActionResult actionResult = controller.GetGameboard(Guid.NewGuid());
+
+            Assert.IsInstanceOf<NotFoundResult>(actionResult);
         }
     }
 }
