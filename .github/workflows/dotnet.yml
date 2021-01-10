@@ -23,6 +23,9 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
       working-directory: code
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    - name: Unit Tests
+      run: dotnet test Snake.Tests --no-build --verbosity normal
+      working-directory: code
+    - name: Integration Tests
+      run: dotnet test Snake.IntegrationTests --no-build --verbosity normal
       working-directory: code
