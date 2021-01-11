@@ -29,3 +29,6 @@ jobs:
     - name: Integration Tests
       run: dotnet test Snake.IntegrationTests --no-build --verbosity normal
       working-directory: code
+    - name: E2E Tests
+      run: dotnet test Snake.E2ETests --no-build --verbosity normal
+      working-directory: code
