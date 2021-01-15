@@ -29,19 +29,11 @@ namespace Snake.E2ETests
                 .Callback<TimerCallback>(r => nextTurn = r);
             GameController controller = new GameController(gameManager);
 
-            /* Закомментированный сценарий не позволяет установить мок таймера
-            // Act: создание новой игры
-            ActionResult creationResult = controller.GetGameboard();
-            // Assert
-            Assert.IsInstanceOf<OkObjectResult>(creationResult);
-            Guid curGameGuid = (Guid)((OkObjectResult)creationResult).Value;
-            */
             // Act: создание новой игры
             Guid curGameGuid = gameManager.CreateNewGameBoard(new Size(5, 5), mockTimer.Object);
 
             // Act, Assert
             IGameBoard gameBoard = GetGameAndAssertIt(controller, curGameGuid);
-            IGameBoard gameBoardInit = GetGameAndAssertIt(controller, curGameGuid); //REMOVE
 
             // ----- Попытка съесть еду -----
             List<EnumDirection> directions = GenerateDirectionsList(gameBoard.Food[0], gameBoard.Snake);
